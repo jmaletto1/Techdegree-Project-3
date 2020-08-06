@@ -24,7 +24,7 @@ class Game:
             try:
                 guess = input(
                     "\n\nEnter a Letter. You currently have {} live(s).\n".format(self.lives))
-                if self.lives > 1 and len(guess) != 1 or not guess.isalpha():
+                if self.lives > 1 and (len(guess) != 1 or not guess.isalpha()):
                     self.lives -= 1
                     print("\nPlease only enter 1 letter. Due to this unncessary silliness, you now have {} lives. Sad.".format(
                         self.lives))
