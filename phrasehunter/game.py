@@ -5,18 +5,34 @@ from .phrase import Phrase
 class Game:
 
     def __init__(self, phrases):
-        # Select the phrases at random
-        self.phrases = []
-        for i in phrases:
-            self.phrases.append(Phrase(i))
+        self.phrases = [Phrase(i) for i in phrases]
         self.phrase = random.choice(self.phrases)
         self.lives = 5
 
-    def the_game(self):
+    def relaunch(self):
+        continue_playing = input("\n\nWould you like to play again? y/n: ")
+        if continue_playing.lower() == 'y' and len(self.phrases) > 0:
+            # Re-launch the game
+            self.phrase = random.choice(self.phrases)
+            self.lives = 5
+            self.welcome()
+        elif continue_playing.lower() != 'n':
+            print(
+                "\nI'm afraid that value was invalid, so we've ended your game. Have a nice day!")
+        else:
+            print("Thanks for playing. Ciao!")
+
+    def remove_phrase(self):
+        self.phrases.remove(self.phrase)
+
+    def welcome(self):
         welcome = """\nWelcome to the Phrase Hunters Challenge. Basically hangman, but fancier.
         \nPlease make your first selection. Here is your phrase:
         """
         print(welcome)
+
+    def the_game(self):
+        self.welcome()
 
         # Run the game (in play, so with 1-5 lives)
         while self.lives > 0 and self.phrase.filled_out() == False:
@@ -40,33 +56,23 @@ class Game:
     # Congratulations area if successful. Relaunch the game
                 if self.lives > 0 and self.phrase.filled_out() == True:
                     self.phrase.reveal_phrase()
-                    print("\n\nWell done, you completed the game!\n")
-                    continue_playing = input(
-                        "Would you like to play again? y/n: ")
-                    if continue_playing.lower() == 'y':
-                        # Re-launch the game
-                        self.phrase = random.choice(self.phrases)
-                        self.lives = 5
-                        print("Welcome to the game! Here is your phrase:")
-                        continue
-                    else:
-                        print("Thanks for playing. Ciao!")
+                    print("\n\nWell done, you completed the game!")
+                    self.remove_phrase()
+                    if len(self.phrases) < 1:
+                        print(
+                            "Oh wow, there are no more phrases! You are the hangman champion!")
+                        break
+                    self.relaunch()
 
         # Game over section. Would you like to play again?
                 elif self.lives <= 0:
                     print("\nGame over! The correct phrase was: \n")
                     self.phrase.reveal_phrase()
-                    relaunch = input(
-                        "\n\nWould you like to play again? y/n: \n\n")
-                    if relaunch.lower() == 'n':
-                        print("\nThanks for playing!")
-                    elif relaunch.lower() == 'y':
-                       # Re-launch the game
-                        self.phrase = random.choice(self.phrases)
-                        self.lives = 5
-                        print("Welcome to the game! Here is your phrase:")
-                        continue
-                    else:
-                        print("I'm afraid your input was invalid. Have a good day!")
+                    self.remove_phrase()
+                    if len(self.phrases) < 1:
+                        print(
+                            "\n\nOh wow, there are no phrases left! Thanks for playing. Have a somewhat pleasurable day.")
+                        break
+                    self.relaunch()
             except ValueError:
                 print("Noooooz that was invalid.")
